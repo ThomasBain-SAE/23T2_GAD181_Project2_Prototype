@@ -5,12 +5,14 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
     public float rotationSpeed = 100.0f;
+    public float jumpForce = 7.0f;
     private Rigidbody rb;
     public float sensitivity = 2f;
     private Transform playerTransform;
     private Transform cameraTransform;
 
     private float rotationX = 0;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -47,5 +49,12 @@ public class PlayerController : MonoBehaviour
         // Apply camera rotation
         cameraTransform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         playerTransform.Rotate(Vector3.up * mouseX * sensitivity);
+
+        // Jump on Space key press
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
 }
+
