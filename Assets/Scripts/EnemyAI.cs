@@ -10,7 +10,7 @@ public class NewBehaviourScript : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
     public float health;
     public GameObject projectile;
-
+    public GameObject monsterScavengerPrefab;
 
     //Patroling
 
@@ -28,9 +28,18 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("Player").transform;
-        agent = GetComponent<NavMeshAgent>();
+        player = GameObject.Find("PlayerObject").transform;
+
+        // Instantiate the prefab and store the reference to the newly created object
+        GameObject monsterObject = Instantiate(monsterScavengerPrefab, transform.position, Quaternion.identity);
+
+        // Get the NavMeshAgent from the instantiated object
+        agent = monsterObject.GetComponent<NavMeshAgent>();
+
+        // You can destroy the prefab instance if you don't need it anymore
+        // Destroy(monsterObject);
     }
+
 
     private void Update()
     {
@@ -86,9 +95,9 @@ public class NewBehaviourScript : MonoBehaviour
         if (!alreadyAttacked)
         {
             //Add Attack code here: (WHATEVER IT IS MAKE SPOOKY)
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.forward * 8f, ForceMode.Impulse);
+           // Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+           // rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
+           // rb.AddForce(transform.forward * 8f, ForceMode.Impulse);
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
