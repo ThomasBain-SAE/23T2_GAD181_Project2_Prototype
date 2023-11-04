@@ -2,38 +2,19 @@ using UnityEngine;
 
 public class OilCollector : MonoBehaviour
 {
-    public float oilCapacity = 100.0f;
-    public float refillRate = 10.0f;
+    public float maxOilCapacity = 10.0f;
+    private PlayerController playerController;
 
-    private float currentOilAmount;
-
-    private LightSource[] lightSources;
-
-    void Start()
+    private void Start()
     {
-        currentOilAmount = oilCapacity;
-
-        lightSources = FindObjectsOfType<LightSource>();
-    }
-
-    void Update()
-    {
-        if (currentOilAmount > 0)
-        {
-            foreach (LightSource lightSource in lightSources)
-            {
-                if (lightSource.NeedsRefill())
-                {
-                    float amountToRefill = Mathf.Min(currentOilAmount, refillRate * Time.deltaTime);
-                    lightSource.RefillLight(amountToRefill);
-                    currentOilAmount -= amountToRefill;
-                }
-            }
-        }
+        playerController = GetComponent<PlayerController>();
     }
 
     public void CollectOil(float amount)
     {
-        currentOilAmount = Mathf.Clamp(currentOilAmount + amount, 0, oilCapacity);
+        float newOilAmount = Mathf.Clamp(playerController.GetOilAmount() + amount, 0, maxOilCapacity);
+        playerController.SetOilAmount(newOilAmount);
     }
+
+    // You may have other methods and variables related to oil collection and management here.
 }

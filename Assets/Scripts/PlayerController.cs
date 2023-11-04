@@ -1,27 +1,27 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
     public float rotationSpeed = 100.0f;
     public float jumpForce = 7.0f;
+    public float maxOilCapacity = 10.0f; // Maximum oil capacity
+
+    private float oilAmount = 0.0f; // Player's oil amount
+
     private Rigidbody rb;
-    public float sensitivity = 2f;
     private Transform playerTransform;
     private Transform cameraTransform;
-
     private float rotationX = 0;
+    public float sensitivity = 2.0f; // Camera sensitivity
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Prevents the player from tilting due to physics
+        rb.freezeRotation = true;
         playerTransform = transform;
         cameraTransform = Camera.main.transform;
         Cursor.lockState = CursorLockMode.Locked;
-
-        // Initialize the camera's rotation to match the player's initial rotation
         cameraTransform.rotation = playerTransform.rotation;
     }
 
@@ -33,20 +33,16 @@ public class PlayerController : MonoBehaviour
 
         Vector3 moveDirection = new Vector3(horizontalInput, 0, verticalInput).normalized;
 
-        // Rotate the player based on the input
         transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
 
-        // Apply movement using forces to the Rigidbody
         Vector3 moveVelocity = transform.forward * moveSpeed * verticalInput;
         rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
 
-        // Camera rotation based on mouse input
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
         rotationX -= mouseY * sensitivity;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f); // Use Mathf.Clamp to limit the rotationX
 
-        // Apply camera rotation
         cameraTransform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         playerTransform.Rotate(Vector3.up * mouseX * sensitivity);
 
@@ -56,5 +52,16 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
-}
 
+    public float GetOilAmount()
+    {
+        return oilAmount;
+    }
+
+    public void SetOilAmount(float amount)
+    {
+        oilAmount = Mathf.Clamp(amount, 0, maxOilCapacity); // Use Mathf.Clamp to limit the oilAmount
+    }
+
+    // Add any additional methods or variables as needed.
+}
