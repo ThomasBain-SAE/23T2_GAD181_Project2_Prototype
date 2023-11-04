@@ -6,8 +6,10 @@ public class PlayerController : MonoBehaviour
     public float rotationSpeed = 100.0f;
     public float jumpForce = 7.0f;
     public float maxOilCapacity = 10.0f; // Maximum oil capacity
+    public float jumpCooldown = 2.0f; // Cooldown in seconds
 
     private float oilAmount = 0.0f; // Player's oil amount
+    private float lastJumpTime = -2.0f; // Initialize to a value less than -jumpCooldown
 
     private Rigidbody rb;
     private Transform playerTransform;
@@ -41,15 +43,19 @@ public class PlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
         rotationX -= mouseY * sensitivity;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f); // Use Mathf.Clamp to limit the rotationX
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
 
         cameraTransform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         playerTransform.Rotate(Vector3.up * mouseX * sensitivity);
 
-        // Jump on Space key press
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Check if the jump cooldown has expired
+        if (Time.time - lastJumpTime >= jumpCooldown && Input.GetKeyDown(KeyCode.Space))
         {
+            // Perform the jump
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+            // Update the last jump time
+            lastJumpTime = Time.time;
         }
     }
 
@@ -60,7 +66,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetOilAmount(float amount)
     {
-        oilAmount = Mathf.Clamp(amount, 0, maxOilCapacity); // Use Mathf.Clamp to limit the oilAmount
+        oilAmount = Mathf.Clamp(amount, 0, maxOilCapacity);
     }
 
     // Add any additional methods or variables as needed.
