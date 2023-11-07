@@ -9,23 +9,17 @@ public class LightSource : MonoBehaviour
     public float maxIntensity = 1.0f; // Maximum light intensity capacity
 
     private Light lightSource;
-    private float initialIntensity;
-    private float timer;
-    private bool needsRefill;
 
     public float refillDistance = 2.0f; // The distance at which the player can refill the light
 
-    private bool isLightOn; // Flag to indicate if the light is turned on
+    public bool isLightOn; // Flag to indicate if the light is turned on
     private NavMeshObstacle obstacle;
     public float lightOnDuration = 10.0f;
 
     void Start()
     {
         lightSource = GetComponent<Light>();
-        initialIntensity = lightSource.intensity;
         lightSource.intensity = 0;
-        timer = fadeDuration;
-        needsRefill = false;
         isLightOn = false;
         obstacle = GetComponent<NavMeshObstacle>();
     }
