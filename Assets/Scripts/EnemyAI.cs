@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
     public NavMeshAgent agent;
     public Transform player;
@@ -31,10 +31,10 @@ public class NewBehaviourScript : MonoBehaviour
         player = GameObject.Find("PlayerObject").transform;
 
         // Instantiate the prefab and store the reference to the newly created object
-        GameObject monsterObject = Instantiate(monsterScavengerPrefab, transform.position, Quaternion.identity);
+        //GameObject monsterObject = Instantiate(monsterScavengerPrefab, transform.position, Quaternion.identity);
 
         // Get the NavMeshAgent from the instantiated object
-        agent = monsterObject.GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
 
         // You can destroy the prefab instance if you don't need it anymore
         // Destroy(monsterObject);
@@ -54,30 +54,66 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void Patroling()
     {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
+        if (!walkPointSet)
+        {
+            SearchWalkPoint();
+        }
+        else
+        {
             agent.SetDestination(walkPoint);
+        }
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
-        //Walkpoint reached
+        // Check if the enemy has reached the walk point
         if (distanceToWalkPoint.magnitude < 1f)
+        {
             walkPointSet = false;
+        }
     }
 
     private void SearchWalkPoint()
     {
-        //Calculate random point in range()
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        int maxAttempts = 5; // Maximum attempts to find a valid walk point
+        int attempts = 0;
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        do
+        {
+            // Calculate a random point within the specified range
+            float randomX = Random.Range(-walkPointRange, walkPointRange);
+            float randomZ = Random.Range(-walkPointRange, walkPointRange);
+            float randomY = Random.Range(-walkPointRange, walkPointRange);
 
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
-            walkPointSet = true;
+            walkPoint = new Vector3(transform.position.x + randomX, transform.position.y + randomY, transform.position.z + randomZ);
 
+            // Check if the random point is on the NavMesh
+            if (NavMesh.SamplePosition(walkPoint, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                // Check if there is a valid path to the walk point
+                NavMeshPath path = new NavMeshPath();
+                if (NavMesh.CalculatePath(transform.position, walkPoint, NavMesh.AllAreas, path))
+                {
+                    if (path.status == NavMeshPathStatus.PathComplete)
+                    {
+                        walkPoint = hit.position;
+                        walkPointSet = true;
+                        break; // Valid walk point found, exit the loop
+                    }
+                }
+            }
+
+            attempts++;
+        } while (attempts < maxAttempts);
+
+        // If the maximum attempts are reached and a valid point is still not found, reset the walkPointSet flag
+        if (attempts >= maxAttempts)
+        {
+            walkPointSet = false;
+        }
     }
+
+
+
 
 
     private void ChasePlayer()

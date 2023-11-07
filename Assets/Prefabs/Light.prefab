@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3873579834344110776}
   - component: {fileID: 854515841389630140}
   - component: {fileID: 7224357082016076791}
+  - component: {fileID: 5084838124845390147}
   m_Layer: 0
   m_Name: Light
   m_TagString: LightSource
@@ -101,6 +102,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeDuration: 10
   minIntensity: 0
+  refillThreshold: 0.2
+  maxIntensity: 1
+  refillDistance: 2
 --- !u!108 &3873579834344110776
 Light:
   m_ObjectHideFlags: 0
@@ -205,5 +209,21 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 5
+  m_Radius: 20
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &5084838124845390147
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3792219853937076171}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 5, y: 0.00001, z: 5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
